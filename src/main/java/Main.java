@@ -1,9 +1,9 @@
-
-import io.reactivex.Observable;
+import Server.Receiver;
+import util.Runner;
 
 public class Main {
+
     public static void main(String[] args){
-        Observable<String> ob = Observable.just("Hello");
-        ob.subscribe(System.out::print);
+        Runner.runExample(Receiver.class);
     }
 }
