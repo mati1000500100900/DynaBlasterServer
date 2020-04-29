@@ -1,6 +1,7 @@
 package Server;
 
 import Entity.ClientConnector;
+import Entity.Lobby;
 import io.reactivex.Observable;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.net.NetSocket;
@@ -14,16 +15,13 @@ public class Receiver extends AbstractVerticle {
     @Override
     public void start() throws Exception {
         vertx.createNetServer().connectHandler(socket -> {
-
             RecordParser parser = RecordParser.newDelimited(";", socket);
-
             FlowableHelper.toFlowable(parser)
                     .map(buffer -> buffer.toString("UTF-8"))
                     .subscribe(data -> interpreter(data, socket), throwable -> {
                         throwable.printStackTrace();
                         socket.close();
                     });
-
         }).listen(2136);
 
         Observable ping = Observable.interval(1000, TimeUnit.MILLISECONDS);
@@ -33,7 +31,7 @@ public class Receiver extends AbstractVerticle {
             }
         });
 
-        System.out.println("Ping server is now listening");
+        System.out.println("Server is now listening");
     }
 
     public void interpreter(String data, NetSocket socket) {
@@ -51,15 +49,25 @@ public class Receiver extends AbstractVerticle {
             }
         } else {
             ClientConnector cl = Global.clients.findBySocket(socket);
-            if (cl != null) { /*--\/--firewall--\/---*/
-
+            if (cl != null) { /*--\/--Only for connected clients--\/---*/
                 if (command[0].equals("DISCONNECT")) {
                     System.out.println(cl.getNick() + " disconnected");
                     Global.clients.remove(cl);
                     socket.close();
-                } else if (command[0].equals("PING")) {
+                } else if (command[0].equals("PONG")) {
                     Long ping = System.currentTimeMillis() - Long.parseLong(command[1]);
                     System.out.println(cl.getNick() + " ping: " + ping + "ms");
+                } else if(command[0].equals("A1")){ //OPEN NEW LOBBY
+                    if(command.length==2){
+                        Lobby lo = new Lobby(command[1]);
+                        lo.addParticipant(cl);
+                        Global.lobbys.add(lo);
+                        socket.write("OK:A1:"+lo.getId()+";");
+                        System.out.println("room: "+command[1]+" created");
+                    }
+                    else socket.write("ER:A3;");
+                }else if(command[0].equals("A2")){ // REQUEST LOBBY LIST
+                    socket.write("A2:"+Global.lobbys.getLobbyNamesAndIds()+";");
                 }
             }
         }

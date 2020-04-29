@@ -41,10 +41,6 @@ public class ClientConnector {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public boolean isActive() {
         return active;
     }

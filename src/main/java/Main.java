@@ -1,4 +1,3 @@
-import Entity.ClientsList;
 import Server.Receiver;
 import util.Runner;
 
