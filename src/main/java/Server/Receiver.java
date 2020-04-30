@@ -24,10 +24,24 @@ public class Receiver extends AbstractVerticle {
                     });
         }).listen(2136);
 
-        Observable ping = Observable.interval(1000, TimeUnit.MILLISECONDS);
+        Observable ping = Observable.interval(1000, TimeUnit.MILLISECONDS); //WATCHDOG
         ping.subscribe(time -> {
             for (ClientConnector c : Global.clients) {
-                c.getSocket().write("PING:" + System.currentTimeMillis() + ";");
+                if(c.getLastAlive()+5000<System.currentTimeMillis())
+                    c.getSocket().write("PING:" + System.currentTimeMillis() + ";");
+            }
+            for (ClientConnector c : Global.clients) {
+                if(c.getLastAlive()+30000<System.currentTimeMillis()){
+                    Lobby lo=Global.lobbys.findLobbyByParticipant(c);
+                    if(lo!=null){
+                        lo.removeParticipant(c);
+                        if(lo.getParticipants().size()==0) Global.lobbys.remove(lo);
+                    }
+                    Global.clients.remove(c);
+                    c.getSocket().close();
+                    System.out.println(c.getNick()+" timed out");
+                    break;
+                }
             }
         });
 
@@ -40,22 +54,30 @@ public class Receiver extends AbstractVerticle {
             System.out.println(command[1] + " connected");
             ClientConnector cl = new ClientConnector(socket, command[1]);
             socket.write("HI:" + cl.getId() + ";");
+            socket.write("PING:" + System.currentTimeMillis() + ";");
             Global.clients.add(cl);
         } else if(command[0].equals("RECONNECT")) {
             ClientConnector cl = Global.clients.findById(command[1]);
             if(cl!=null){
-                socket.write("OK");
+                socket.write("OK;");
                 cl.setSocket(socket);
             }
         } else {
             ClientConnector cl = Global.clients.findBySocket(socket);
             if (cl != null) { /*--\/--Only for connected clients--\/---*/
+                cl.seenAlive();
                 if (command[0].equals("DISCONNECT")) {
                     System.out.println(cl.getNick() + " disconnected");
                     Global.clients.remove(cl);
+                    Lobby lo=Global.lobbys.findLobbyByParticipant(cl);
+                    if(lo!=null){
+                        lo.removeParticipant(cl);
+                        if(lo.getParticipants().size()==0) Global.lobbys.remove(lo);
+                    }
                     socket.close();
                 } else if (command[0].equals("PONG")) {
                     Long ping = System.currentTimeMillis() - Long.parseLong(command[1]);
+                    cl.setLastPing(ping);
                     System.out.println(cl.getNick() + " ping: " + ping + "ms");
                 } else if(command[0].equals("A1")){ //OPEN NEW LOBBY
                     if(command.length==2){
@@ -65,9 +87,26 @@ public class Receiver extends AbstractVerticle {
                         socket.write("OK:A1:"+lo.getId()+";");
                         System.out.println("room: "+command[1]+" created");
                     }
-                    else socket.write("ER:A3;");
+                    else socket.write("ER:A1;");
                 }else if(command[0].equals("A2")){ // REQUEST LOBBY LIST
                     socket.write("A2:"+Global.lobbys.getLobbyNamesAndIds()+";");
+                }else if(command[0].equals("A3")){ // JOIN LOBBY
+                    if(command.length==2){
+                        Lobby lo = Global.lobbys.findById(command[1]);
+                        if(lo!=null){
+                            lo.addParticipant(cl);
+                        }
+                        else socket.write("ER:A3;");
+                    }
+                    else socket.write("ER:A3;");
+                }else if(command[0].equals("A4")){ // LEAVE LOBBY
+                    Lobby lo = Global.lobbys.findLobbyByParticipant(cl);
+                    if(lo!=null){
+                        lo.removeParticipant(cl);
+                        socket.write("OK:A4;");
+                        if(lo.getParticipants().size()==0) Global.lobbys.remove(lo);
+                    }
+                    else socket.write("ER:A4;");
                 }
             }
         }

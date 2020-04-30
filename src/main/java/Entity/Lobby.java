@@ -1,16 +1,29 @@
 package Entity;
 
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class Lobby {
     private String name;
     private String id;
     private ClientsList participants;
+    private Observable shedule;
 
     public Lobby(String name){
-        this.name=name;
         this.participants = new ClientsList();
+        this.name=name;
         this.id=genId();
+        this.shedule = Observable.interval(1000, TimeUnit.MILLISECONDS);
+        Disposable subscribe = this.shedule.subscribe(time -> broadcastUsers((Long) time));
+    }
+
+    public void broadcastUsers(Long time){
+        for(ClientConnector c : participants){
+            c.getSocket().write("C1:"+participants.getCilentsNicksAndPings()+";");
+        }
     }
 
     public String getId() {

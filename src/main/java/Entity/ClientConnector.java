@@ -9,12 +9,16 @@ public class ClientConnector {
     private String nick;
     private String id;
     private boolean active;
+    private Long lastAlive;
+    private Long lastPing;
 
     public ClientConnector(NetSocket s, String nick){
         this.socket=s;
         this.nick=nick;
         this.id=genId();
         this.active=true;
+        this.lastAlive=System.currentTimeMillis();
+        this.lastPing=1000l;
     }
 
     private String genId(){
@@ -47,5 +51,21 @@ public class ClientConnector {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Long getLastAlive() {
+        return lastAlive;
+    }
+
+    public void seenAlive() {
+        this.lastAlive = System.currentTimeMillis();
+    }
+
+    public Long getLastPing() {
+        return lastPing;
+    }
+
+    public void setLastPing(Long lastPing) {
+        this.lastPing = lastPing;
     }
 }
