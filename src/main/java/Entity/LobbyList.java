@@ -8,7 +8,7 @@ public class LobbyList extends ArrayList<Lobby> {
         return this.stream().map(l->l.getName()).collect(Collectors.joining(":"));
     }
     public String getLobbyNamesAndIds(){
-        return this.stream().map(l->l.getName()+":"+l.getId()).collect(Collectors.joining(":"));
+        return this.stream().map(l->l.getName()+"/"+l.getId()).collect(Collectors.joining(":"));
     }
     public Lobby findById(String id){
         for(Lobby l : this){

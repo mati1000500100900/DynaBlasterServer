@@ -96,7 +96,7 @@ public class Receiver extends AbstractVerticle {
                         Lobby lo = Global.lobbys.findById(command[1]);
                         if(lo!=null){
                             lo.addParticipant(cl);
-                            socket.write("OK;A3;");
+                            socket.write("OK:A3;");
                         }
                         else socket.write("ER:A3;");
                     }

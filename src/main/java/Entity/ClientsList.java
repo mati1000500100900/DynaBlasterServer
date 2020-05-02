@@ -12,16 +12,15 @@ public class ClientsList extends ArrayList<ClientConnector> {
         }
         return null;
     }
+
     public ClientConnector findBySocket(NetSocket s){
         for(ClientConnector c : this){
             if(c.getSocket()==s) return c;
         }
         return null;
     }
-    public String getCilentsNicks(){
-        return this.stream().map(c->c.getNick()).collect(Collectors.joining(":"));
-    }
+
     public String getCilentsNicksAndPings(){
-        return this.stream().map(c->c.getNick()+" - "+c.getLastPing()+"ms").collect(Collectors.joining(":"));
+        return this.stream().map(c->c.getNick()+"/"+c.getLastPing()).collect(Collectors.joining(":"));
     }
 }
