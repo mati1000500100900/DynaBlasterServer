@@ -22,7 +22,7 @@ public class Receiver extends AbstractVerticle {
                         throwable.printStackTrace();
                         socket.close();
                     });
-        }).listen(2136, "localhost");
+        }).listen(8080);
 
         Observable ping = Observable.interval(1000, TimeUnit.MILLISECONDS); //WATCHDOG
         ping.subscribe(time -> {
