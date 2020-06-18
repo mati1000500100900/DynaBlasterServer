@@ -18,7 +18,7 @@ public class ClientConnector {
         this.id=genId();
         this.active=true;
         this.lastAlive=System.currentTimeMillis();
-        this.lastPing=1000l;
+        this.lastPing=1000L;
     }
 
     private String genId(){
