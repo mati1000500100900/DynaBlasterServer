@@ -8,15 +8,12 @@ public class Player{
     private boolean isAlive;
     private int frags;
 
-    public Player(int positionX, int positionY, int vector, boolean isAlive, int frags, ClientConnector clientConnector)
+    public Player( ClientConnector clientConnector, int positionX, int positionY)
     {
 
         this.clientConnector = clientConnector;
         this.positionX=positionX;
         this.positionY=positionY;
-        this.vector=vector;
-        this.isAlive=isAlive;
-        this.frags=frags;
 
     }
 
