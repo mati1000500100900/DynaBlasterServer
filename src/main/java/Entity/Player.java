@@ -2,22 +2,16 @@ package Entity;
 
 public class Player{
     private ClientConnector clientConnector;
-    private String nick;
     private int positionX;
     private int positionY;
     private int vector;
     private boolean isAlive;
     private int frags;
-    private String id;
-    private long lastAlive;
-    private long lastPing;
 
-    public Player(int positionX, int positionY, int vector, boolean isAlive, int frags)
+    public Player(int positionX, int positionY, int vector, boolean isAlive, int frags, ClientConnector clientConnector)
     {
-        this.id = this.clientConnector.getId();
-        this.nick = this.clientConnector.getNick();
-        this.lastAlive = this.clientConnector.getLastAlive();
-        this.lastPing = this.clientConnector.getLastPing();
+
+        this.clientConnector = clientConnector;
         this.positionX=positionX;
         this.positionY=positionY;
         this.vector=vector;
