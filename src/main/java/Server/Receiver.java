@@ -26,7 +26,7 @@ public class Receiver extends AbstractVerticle {
                     });
         }).listen(8080);
 
-        /*Observable ping = Observable.interval(1000, TimeUnit.MILLISECONDS); //WATCHDOG
+        Observable ping = Observable.interval(1000, TimeUnit.MILLISECONDS); //WATCHDOG
         ping.subscribe(time -> {
             for (ClientConnector c : Global.clients) {
                 if (c.getLastAlive() + 1000 < System.currentTimeMillis())
@@ -45,7 +45,7 @@ public class Receiver extends AbstractVerticle {
                     break;
                 }
             }
-        });*/
+        });
         System.out.println("Server is now listening");
     }
 
