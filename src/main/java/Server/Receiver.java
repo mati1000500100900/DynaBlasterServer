@@ -3,6 +3,7 @@ package Server;
 import Entity.ClientConnector;
 import Entity.CoreGame;
 import Entity.Lobby;
+import Entity.Player;
 import io.reactivex.Observable;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.net.NetSocket;
@@ -25,7 +26,7 @@ public class Receiver extends AbstractVerticle {
                     });
         }).listen(8080);
 
-        Observable ping = Observable.interval(1000, TimeUnit.MILLISECONDS); //WATCHDOG
+        /*Observable ping = Observable.interval(1000, TimeUnit.MILLISECONDS); //WATCHDOG
         ping.subscribe(time -> {
             for (ClientConnector c : Global.clients) {
                 if (c.getLastAlive() + 1000 < System.currentTimeMillis())
@@ -44,7 +45,7 @@ public class Receiver extends AbstractVerticle {
                     break;
                 }
             }
-        });
+        });*/
         System.out.println("Server is now listening");
     }
 
@@ -107,11 +108,35 @@ public class Receiver extends AbstractVerticle {
                 } else if (command[0].equals("A5")) { // START GAME
                     Lobby lo = Global.lobbys.findLobbyByParticipant(cl);
                     if (lo != null && lo.getParticipants().size() > 1) {
-                        CoreGame game = new CoreGame(lo);
                         socket.write("OK:A5;");
+                        CoreGame game = new CoreGame(lo);
+                        Global.games.add(game);
                         Global.lobbys.remove(lo);
                     } else socket.write("ER:A5;");
 
+                } else {
+                    CoreGame game = Global.games.findByPlayer(cl);
+                    if (game != null) {
+                        if (command[0].equals("D1")) {
+                            if (command.length == 4) {
+                                Player p = game.getPlayers().findByConnector(cl);
+                                System.out.println(p);
+                                if (p != null) {
+                                    System.out.println(p);
+                                    game.recieveMovement(cl, Integer.valueOf(command[1]), Integer.valueOf(command[2]), Integer.valueOf(command[3]));
+                                }
+                            } else socket.write("ER:D1");
+                        } else if (command[0].equals("D2")) {
+                            if (command.length == 3) {
+                                Player p = game.getPlayers().findByConnector(cl);
+                                game.newBomb(p, Integer.valueOf(command[1]), Integer.valueOf(command[2]));
+                            } else socket.write("ER:D2");
+                        } else if (command[0].equals("D3")) {
+                            if (command.length == 1) {
+                                game.killingInAName(cl);
+                            } else socket.write("ER:D3"); //AKA niewypał
+                        }
+                    }
                 }
             }
         }

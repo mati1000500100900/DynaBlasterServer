@@ -4,9 +4,8 @@ public class Player {
     private ClientConnector clientConnector;
     private int positionX;
     private int positionY;
-    private int vector; // 0 - dół, 1 - prawo, 2 - góra, 3 - lewo
+    private int vector;
     private boolean isAlive;
-    private int frags;
 
     public Player(ClientConnector clientConnector) {
 
@@ -37,11 +36,11 @@ public class Player {
     }
 
     public int getPositionY() {
-        return positionX;
+        return positionY;
     }
 
     public void setPositionY(int position) {
-        this.positionX = position;
+        this.positionY = position;
     }
 
     public boolean getIsAlive() {
@@ -50,14 +49,6 @@ public class Player {
 
     public void setIsAlive(boolean alive) {
         this.isAlive = alive;
-    }
-
-    public int getWins() {
-        return frags;
-    }
-
-    public void setWins(int frags) {
-        this.frags = frags;
     }
 
     public ClientConnector getClientConnector() {

@@ -19,7 +19,7 @@ public class PlayerList extends ArrayList<Player> {
     }
 
     public String getPlayersPosition() {
-        return this.stream().map(p -> p.getClientConnector().getId() + "|" + p.getPositionX() + "|" + p.getPositionY() + "|" + p.getVector() + "|" + Boolean.toString(p.getIsAlive())).collect(Collectors.joining(":"));
+        return this.stream().map(p -> p.getClientConnector().getId() + "|" + p.getPositionX() + "|" + p.getPositionY() + "|" + p.getVector() + "|" + Integer.toString(p.getIsAlive() ? 1 : 0)).collect(Collectors.joining(":"));
     }
 
 }
