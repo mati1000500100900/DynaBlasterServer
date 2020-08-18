@@ -1,19 +1,24 @@
 package Entity;
 
+import java.util.UUID;
+
 public class Bomb {
     private int positionX;
     private int positionY;
-    private int timer;
+    private long timer;
     private String playerId;
     private String bombId;
 
-    public Bomb(int positionX, int positionY, int timer, String playerId, String bombId)
-    {
-        this.bombId = bombId;
+    public Bomb(int positionX, int positionY, int timer, String playerId) {
+        this.bombId = genId();
         this.playerId = playerId;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.timer = timer;
+        this.timer = timer + System.currentTimeMillis();
+    }
+
+    private String genId() {
+        return UUID.randomUUID().toString().substring(0, 6);
     }
 
     public int getPositionX() {
@@ -24,7 +29,7 @@ public class Bomb {
         return positionY;
     }
 
-    public int getTimer() {
+    public long getTimer() {
         return timer;
     }
 

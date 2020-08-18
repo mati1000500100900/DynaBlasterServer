@@ -12,17 +12,17 @@ public class ClientConnector {
     private Long lastAlive;
     private Long lastPing;
 
-    public ClientConnector(NetSocket s, String nick){
-        this.socket=s;
-        this.nick=nick;
-        this.id=genId();
-        this.active=true;
-        this.lastAlive=System.currentTimeMillis();
-        this.lastPing=1000L;
+    public ClientConnector(NetSocket s, String nick) {
+        this.socket = s;
+        this.nick = nick;
+        this.id = genId();
+        this.active = true;
+        this.lastAlive = System.currentTimeMillis();
+        this.lastPing = 1000L;
     }
 
-    private String genId(){
-        return UUID.randomUUID().toString().substring(0,6);
+    private String genId() {
+        return UUID.randomUUID().toString().substring(0, 6);
     }
 
     public NetSocket getSocket() {
