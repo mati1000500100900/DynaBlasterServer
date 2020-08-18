@@ -21,9 +21,9 @@ public class CoreGame {
         bombs = new BombList();
         hasGameStarted = false;
         isGameOver = false;
-        this.explosion = Observable.interval(20, TimeUnit.MILLISECONDS);
+        this.explosion = Observable.interval(1000, TimeUnit.MILLISECONDS);
         Disposable subscribe = this.explosion.subscribe(time -> kaBoom((Long) time));
-        this.movement = Observable.interval(20, TimeUnit.MILLISECONDS);
+        this.movement = Observable.interval(1000, TimeUnit.MILLISECONDS);
         Disposable subscribe2 = this.movement.subscribe(time -> broadcastMovement((Long) time));
     }
 

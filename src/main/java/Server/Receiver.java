@@ -1,6 +1,7 @@
 package Server;
 
 import Entity.ClientConnector;
+import Entity.CoreGame;
 import Entity.Lobby;
 import io.reactivex.Observable;
 import io.vertx.core.AbstractVerticle;
@@ -44,12 +45,11 @@ public class Receiver extends AbstractVerticle {
                 }
             }
         });
-
         System.out.println("Server is now listening");
     }
 
     public void interpreter(String data, NetSocket socket) {
-        String[] command = data.split(":");
+        String[] command = data.strip().split(":");
         if (command[0].equals("CONN")) {
             System.out.println(command[1] + " connected");
             ClientConnector cl = new ClientConnector(socket, command[1]);
@@ -92,11 +92,10 @@ public class Receiver extends AbstractVerticle {
                 } else if (command[0].equals("A3")) { // JOIN LOBBY
                     if (command.length == 2) {
                         Lobby lo = Global.lobbys.findById(command[1]);
-                        if (lo != null) {
+                        if (lo != null && lo.getParticipants().size() < 4) {
                             lo.addParticipant(cl);
                             socket.write("OK:A3;");
-                        } //TODO: sprawdzanie czy lobby nie jest pełne
-                        else socket.write("ER:A3;");
+                        } else socket.write("ER:A3;");
                     } else socket.write("ER:A3;");
                 } else if (command[0].equals("A4")) { // LEAVE LOBBY
                     Lobby lo = Global.lobbys.findLobbyByParticipant(cl);
@@ -105,6 +104,14 @@ public class Receiver extends AbstractVerticle {
                         socket.write("OK:A4;");
                         if (lo.getParticipants().size() == 0) Global.lobbys.remove(lo);
                     } else socket.write("ER:A4;");
+                } else if (command[0].equals("A5")) { // START GAME
+                    Lobby lo = Global.lobbys.findLobbyByParticipant(cl);
+                    if (lo != null && lo.getParticipants().size() > 1) {
+                        CoreGame game = new CoreGame(lo);
+                        socket.write("OK:A5;");
+                        Global.lobbys.remove(lo);
+                    } else socket.write("ER:A5;");
+
                 }
             }
         }
