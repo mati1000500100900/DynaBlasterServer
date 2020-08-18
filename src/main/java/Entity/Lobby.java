@@ -16,7 +16,7 @@ public class Lobby {
         this.participants = new ClientsList();
         this.name = name;
         this.id = genId();
-        this.shedule = Observable.interval(10000, TimeUnit.MILLISECONDS); //TODO: Przywrócić interwał do 1000
+        this.shedule = Observable.interval(1000, TimeUnit.MILLISECONDS); //TODO: Przywrócić interwał do 1000
         Disposable subscribe = this.shedule.subscribe(time -> broadcastUsers((Long) time));
     }
 
