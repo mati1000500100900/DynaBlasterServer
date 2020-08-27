@@ -1,13 +1,15 @@
 package Entity;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class BombList extends ArrayList<Bomb> {
-    public Bomb findById(String id) {
-        for (Bomb b : this) {
-            if (b.getBombId().equals(id)) return b;
-        }
-        return null;
+    public Bomb findByBombId(String id) {
+        return this.stream().filter(b -> Objects.equals(b.getBombId(),id)).findFirst().orElse(null);
+    }
+
+    public Bomb findByPlayerId(String id) {
+        return this.stream().filter(b -> Objects.equals(b.getPlayerId(),id)).findFirst().orElse(null);
     }
 
 }
