@@ -20,7 +20,7 @@ class BombListTest {
     }
 
     @Test
-    void findByBombIdTest() {
+    void findByBombId() {
         Bomb b = new Bomb(3,2,3000,"Nt312d");
         bl.add(b);
 
@@ -28,7 +28,7 @@ class BombListTest {
     }
 
     @Test
-    void findByBombIdTest2() {
+    void findByBombId2() {
         assertNull(bl.findByBombId("testID"));
     }
 

@@ -50,7 +50,7 @@ public class Receiver extends AbstractVerticle {
     }
 
     public void interpreter(String data, NetSocket socket) {
-        String[] command = data.strip().split(":");
+        String[] command = data.trim().split(":");
         if (command[0].equals("CONN")) {
             System.out.println(command[1] + " connected");
             ClientConnector cl = new ClientConnector(socket, command[1]);
